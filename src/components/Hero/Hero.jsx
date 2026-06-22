@@ -8,7 +8,7 @@ import {
   InfoBlock,
   LeftText,
   RightText,
-  Divider,
+  Divider
 } from './Hero.styled.js';
 
 
