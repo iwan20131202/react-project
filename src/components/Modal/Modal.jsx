@@ -1,7 +1,7 @@
-import { useEffect } from "react";
-import { Formik, Field, ErrorMessage } from "formik";
-import * as Yup from "yup";
-import { toast } from "react-toastify";
+import { useEffect } from 'react';
+import { Formik, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
+import { toast } from 'react-toastify';
 
 import {
   Backdrop,
@@ -15,51 +15,51 @@ import {
   SubmitButton,
   BottomText,
   LoginLink,
-} from "./Modal.styled.js";
+} from './Modal.styled.js';
 
 const registerSchema = Yup.object({
   username: Yup.string()
-    .min(2, "Minimum 2 symbols")
-    .required("Username is required"),
+    .min(2, 'Minimum 2 symbols')
+    .required('Username is required'),
 
-  email: Yup.string().email("Invalid email").required("Email is required"),
+  email: Yup.string().email('Invalid email').required('Email is required'),
 
   password: Yup.string()
-    .min(6, "Minimum 6 symbols")
-    .required("Password is required"),
+    .min(6, 'Minimum 6 symbols')
+    .required('Password is required'),
 });
 
 export const RegisterModal = ({ isOpen, onClose, onRegister }) => {
   useEffect(() => {
-    const handleEsc = (e) => {
-      if (e.key === "Escape") {
+    const handleEsc = e => {
+      if (e.key === 'Escape') {
         onClose();
       }
     };
 
-    window.addEventListener("keydown", handleEsc);
+    window.addEventListener('keydown', handleEsc);
 
-    return () => window.removeEventListener("keydown", handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
   }, [onClose]);
 
   if (!isOpen) return null;
 
-  const handleSubmit = (values) => {
+  const handleSubmit = values => {
     const userData = {
       username: values.username,
       email: values.email,
     };
 
-    localStorage.setItem("user", JSON.stringify(userData));
+    localStorage.setItem('user', JSON.stringify(userData));
 
     onRegister(userData);
 
-    toast.success("Registration successful!");
+    toast.success('Registration successful!');
 
     onClose();
   };
 
-  const handleBackdropClick = (e) => {
+  const handleBackdropClick = e => {
     if (e.target === e.currentTarget) {
       onClose();
     }
@@ -72,9 +72,9 @@ export const RegisterModal = ({ isOpen, onClose, onRegister }) => {
 
         <Formik
           initialValues={{
-            username: "",
-            email: "",
-            password: "",
+            username: '',
+            email: '',
+            password: '',
           }}
           validationSchema={registerSchema}
           onSubmit={handleSubmit}

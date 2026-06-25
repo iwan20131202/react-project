@@ -1,22 +1,28 @@
 import styled from "styled-components";
 
 export const HeaderWrapper = styled.header`
+  width: 100%;
   height: 80px;
+  background: #fff;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 12px 150px;
-  background: #fff;
 
   @media (max-width: 1199px) {
     height: 70px;
-    padding: 17px 100px;
   }
-
   @media (max-width: 767px) {
     height: 50px;
-    padding: 14px 50px;
   }
+`;
+
+export const HeaderContainer = styled.div`
+  width: 100%;
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 `;
 
 export const Left = styled.div`
@@ -25,7 +31,7 @@ export const Left = styled.div`
 `;
 
 export const LogoImg = styled.img`
-  height: 56px;
+  height: 55px;
 
   @media (max-width: 1199px) {
     height: 36px;

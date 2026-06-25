@@ -12,12 +12,13 @@ export const LoaderOverlay = styled.div`
 `;
 
 export const List = styled.ul`
-  width: 1160px;
+  width: 100%;
+  max-width: 1140px;
   margin: 65px auto 0;
-  padding: 0;
+  padding: 0 15px;
   display: grid;
-  grid-template-columns: repeat(3, 320px);
-  gap: 100px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 90px;
   list-style: none;
 `;
 

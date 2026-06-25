@@ -1,5 +1,5 @@
 import {
-  Card as StyledCard, 
+  Card,
   Header,
   City,
   Country,
@@ -14,13 +14,19 @@ import {
   FavoriteButton,
   DeleteButton,
   MoreButton,
-} from './Card.styled.js';
+} from './WeatherCard.styled.js';
 
 import { IoIosRefresh } from 'react-icons/io';
 import { GrFavorite } from 'react-icons/gr';
 import { FaRegTrashAlt } from 'react-icons/fa';
 
-export const Card = ({ weather, onDelete }) => {
+export const WeatherCard = ({
+  weather,
+  onDelete,
+  onRefresh,
+  onFavorite,
+  onMore,
+}) => {
   const { name, sys, main, weather: weatherInfo } = weather;
 
   const countryName = new Intl.DisplayNames(['en'], {
@@ -30,8 +36,7 @@ export const Card = ({ weather, onDelete }) => {
   const date = new Date();
 
   return (
-
-    <StyledCard>
+    <Card>
       <Header>
         <City>{name}</City>
         <Country>{countryName}</Country>
@@ -69,20 +74,23 @@ export const Card = ({ weather, onDelete }) => {
       <Temperature>{Math.round(main.temp)}°C</Temperature>
 
       <Footer>
-        <ActionButton>
+        <ActionButton onClick={() => onRefresh(weather.id)}>
           <IoIosRefresh />
         </ActionButton>
 
-        <FavoriteButton>
+        <FavoriteButton
+          onClick={() => onFavorite(weather.id)}
+          $active={weather.favorite}
+        >
           <GrFavorite />
         </FavoriteButton>
 
-        <MoreButton>See more</MoreButton>
+        <MoreButton onClick={() => onMore(weather)}>See more</MoreButton>
 
         <DeleteButton onClick={() => onDelete(weather.id)}>
           <FaRegTrashAlt />
         </DeleteButton>
       </Footer>
-    </StyledCard> 
+    </Card>
   );
 };

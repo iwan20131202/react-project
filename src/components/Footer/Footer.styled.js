@@ -2,37 +2,25 @@ import styled from "styled-components";
 
 export const FooterWrapper = styled.footer`
   background: #ffb36c;
-  height: 179px;
-
-  @media (max-width: 1199px) {
-    height: auto;
-    padding: 20px 0;
-  }
-
-  @media (max-width: 767px) {
-    height: auto;
-    padding: 30px 0;
-  }
+  width: 100%;
+  padding: 30px 0;
 `;
 
-export const FooterContainer = styled.div`
+export const FooterContent = styled.div`
   width: 100%;
-  max-width: 1000px;
-  height: 100%;
-  margin: 0;
-  padding-left: 150px;
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 15px;
   display: flex;
   align-items: center;
   justify-content: flex-start;
   gap: 100px;
 
   @media (max-width: 1199px) {
-    padding-left: 100px;
     gap: 60px;
   }
 
   @media (max-width: 767px) {
-    padding-left: 0;
     flex-direction: column;
     justify-content: center;
     align-items: center;

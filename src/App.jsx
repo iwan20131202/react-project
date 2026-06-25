@@ -1,7 +1,6 @@
+import { useState, useEffect } from 'react';
 
-
-import { useState } from 'react';
-
+import { Container } from './components/Container/Container.jsx';
 import { GlobalStyle } from './styles/GlobalStyles.js';
 import { Page, Main } from './App.styled.js';
 
@@ -10,36 +9,109 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import { Header } from './components/Header/Header.jsx';
 import { Hero } from './components/Hero/Hero.jsx';
-import { List } from './components/List/List.jsx'; 
+import { WeatherList } from './components/WeatherList/WeatherList.jsx';
 import { News } from './components/News/News.jsx';
-import { Footer } from './components/Footer/Footer.jsx'; 
+import { Gallery } from './components/Gallery/Gallery.jsx'; // Исправлено: добавлен ./
+import { Footer } from './components/Footer/Footer.jsx';
 
-import { fetchWeather } from './services/weatherApi.js';
+import { fetchWeather } from './services/weatherApi.js'; // Исправлено: убран пробел
+import { fetchNaturePhotos } from './services/pixabayApi.js';
 
 function App() {
   const [weatherCards, setWeatherCards] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [photos, setPhotos] = useState([]);
+
+  useEffect(() => {
+    const loadCities = async () => {
+      try {
+        setLoading(true);
+        const saved = localStorage.getItem('weatherCards');
+
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          const updated = await Promise.all(
+            parsed.map(card => fetchWeather(card.name))
+          );
+          const cards = updated.map((item, index) => ({
+            ...item,
+            favorite: parsed[index].favorite || false,
+          }));
+          setWeatherCards(cards);
+        } else {
+          const defaultCities = ['Kyiv', 'London', 'New York'];
+          const cards = await Promise.all(
+            defaultCities.map(city => fetchWeather(city))
+          );
+          setWeatherCards(
+            cards.map(card => ({
+              ...card,
+              favorite: false,
+            }))
+          );
+        }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadCities();
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('weatherCards', JSON.stringify(weatherCards));
+  }, [weatherCards]);
+
+  useEffect(() => {
+    const getPhotos = async () => {
+      try {
+        const data = await fetchNaturePhotos();
+        setPhotos(data);
+      } catch (error) {
+        console.error('Помилка завантаження фото:', error);
+      }
+    };
+    getPhotos();
+  }, []);
 
   const handleSearch = async city => {
     try {
       setLoading(true);
-
       const weather = await fetchWeather(city);
-
       setWeatherCards(prev => {
-        const exists = prev.some(item => item.id === weather.id);
-
-        if (exists) {
-          return prev;
-        }
-
-        return [...prev, weather];
+        const exists = prev.some(card => card.id === weather.id);
+        if (exists) return prev;
+        return [...prev, { ...weather, favorite: false }];
       });
     } catch (error) {
       console.log(error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleRefresh = async id => {
+    try {
+      const currentCard = weatherCards.find(card => card.id === id);
+      if (!currentCard) return;
+      const updated = await fetchWeather(currentCard.name);
+      setWeatherCards(prev =>
+        prev.map(card =>
+          card.id === id ? { ...updated, favorite: card.favorite } : card
+        )
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleFavorite = id => {
+    setWeatherCards(prev =>
+      prev.map(card =>
+        card.id === id ? { ...card, favorite: !card.favorite } : card
+      )
+    );
   };
 
   const deleteCard = id => {
@@ -54,15 +126,17 @@ function App() {
           <Header />
           <ToastContainer />
           <Hero onSearch={handleSearch} />
-          
-        
-          <List
-            weatherCards={weatherCards}
-            loading={loading}
-            onDelete={deleteCard}
-          />
-          
-          <News />
+          <Container>
+            <WeatherList
+              weatherCards={weatherCards}
+              loading={loading}
+              onDelete={deleteCard}
+              onRefresh={handleRefresh}
+              onFavorite={handleFavorite}
+            />
+            <News />
+            {photos.length > 0 && <Gallery images={photos} />}
+          </Container>
         </Main>
         <Footer />
       </Page>

@@ -134,7 +134,7 @@ export const RightText = styled.p`
   position: absolute;
   left: calc(50% + 38px);
   top: 0;
-  width: 164px;
+  width: 220px;
   font-family: "Montserrat", sans-serif;
   font-weight: 500;
   font-size: 24px;

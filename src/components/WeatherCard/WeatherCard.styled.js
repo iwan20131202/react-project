@@ -1,7 +1,9 @@
 import styled from "styled-components";
 
 export const Card = styled.div`
-  width: 320px;
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto;
   padding: 15px 30px;
   border-radius: 20px;
   background: #e8e8e8;
@@ -44,7 +46,7 @@ export const ForecastButtons = styled.div`
 `;
 
 export const ForecastButton = styled.button`
-  padding: 8px 18px;
+  padding: 8px 10px;
   border: none;
   border-radius: 10px;
   background-color: #ffb36c;
@@ -95,10 +97,10 @@ export const ActionButton = styled.button`
 `;
 
 export const FavoriteButton = styled.button`
-  border: none;
-  background: transparent;
-  cursor: pointer;
+  color: ${({ $active }) => ($active ? "red" : "#000")};
   font-size: 30px;
+  cursor: pointer;
+  transition: 0.2s;
 `;
 
 export const DeleteButton = styled.button`

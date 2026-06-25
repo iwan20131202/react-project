@@ -2,9 +2,7 @@
   "name": "react-project",
   "version": "0.1.0",
   "private": true,
- "homepage": "https://iwan20131202.github.io/react-project"
-,
-
+  "homepage": "https://iwan20131202.github.io/react-project",
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
@@ -14,8 +12,10 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^13.5.0",
+    "chart.js": "^4.5.1",
     "formik": "^2.4.9",
     "react": "^19.2.7",
+    "react-chartjs-2": "^5.3.1",
     "react-dom": "^19.2.7",
     "react-icons": "^5.6.0",
     "react-loader-spinner": "^8.0.2",
@@ -25,16 +25,16 @@
     "recharts": "^3.8.1",
     "style-components": "^0.1.0",
     "styled-components": "^6.4.2",
+    "swiper": "^12.2.0",
     "web-vitals": "^2.1.4",
     "yup": "^1.7.1"
   },
-"scripts": {
-  "predeploy": "npm run build",
-  "deploy": "gh-pages -d build",
-  "start": "react-scripts start",
-  "build": "react-scripts build"
-},
-
+  "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
+    "start": "react-scripts start",
+    "build": "react-scripts build"
+  },
   "eslintConfig": {
     "extends": [
       "react-app",

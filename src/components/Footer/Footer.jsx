@@ -1,6 +1,6 @@
 import {
   FooterWrapper,
-  FooterContainer,
+  FooterContent,
   Logo,
   InfoBlock,
   Title,
@@ -10,17 +10,15 @@ import {
   SocialIcon,
 } from './Footer.styled.js';
 
-
-import logo from "../../assets/images/Header/logo.png";
-import instagram from "../../assets/icons/Instagram.png";
-import facebook from "../../assets/icons/Facebook.png";
-import whatsapp from "../../assets/icons/Whatsapp.png";
-
+import logo from '../../assets/images/Header/logo.png';
+import instagram from '../../assets/icons/Instagram.png';
+import facebook from '../../assets/icons/Facebook.png';
+import whatsapp from '../../assets/icons/Whatsapp.png';
 
 export const Footer = () => {
   return (
     <FooterWrapper>
-      <FooterContainer>
+      <FooterContent>
         <Logo src={logo} alt="Logo" />
 
         <InfoBlock>
@@ -50,7 +48,7 @@ export const Footer = () => {
             </SocialLink>
           </Socials>
         </InfoBlock>
-      </FooterContainer>
+      </FooterContent>
     </FooterWrapper>
   );
 };
