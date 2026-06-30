@@ -1,77 +1,78 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { IoSearch } from 'react-icons/io5';
 import {
   SearchWrapper,
   SearchInput,
   SearchButton,
+  DropdownList,
+  DropdownItem
 } from './SearchBar.styled.js';
 
-
-const POPULAR_CITIES = [
-  'Kyiv', 'Kharkiv', 'Odesa', 'Dnipro', 'Donetsk', 
-  'Zaporizhzhia', 'Lviv', 'Kryvyi Rih', 'Mykolaiv', 'Mariupol', 
-  'Luhansk', 'Vinnytsia', 'Makiivka', 'Simferopol', 'Sevastopol', 
-  'Kherson', 'Poltava', 'Chernihiv', 'Cherkasy', 'Khmelnytskyi', 
-  'Chernivtsi', 'Zhytomyr', 'Sumy', 'Rivne', 'Horlivka', 
-  'Ivano-Frankivsk', 'Kamianske', 'Kropyvnytskyi', 'Kremenchuk', 'Lutsk', 
-  'Ternopil', 'Bila Tserkva', 'Kramatorsk', 'Melitopol', 'Kerch', 
-  'Nikopol', 'Sloviansk', 'Uzhhorod', 'Berdiansk', 'Alchevsk', 
-  'Pavlohrad', 'Evpatoria', 'Lysychansk', 'Brovary',
-  'Moscow', 'Saint Petersburg', 'Novosibirsk', 'Yekaterinburg', 'Kazan',
-  'Nizhny Novgorod', 'Chelyabinsk', 'Krasnoyarsk', 'Samara', 'Ufa',
-  'Rostov-on-Don', 'Omsk', 'Krasnodar',
-  'London', 'Paris', 'Berlin', 'Warsaw', 'Rome', 
-  'Madrid', 'Vienna', 'Prague', 'Amsterdam', 'Brussels', 
-  'Stockholm', 'Oslo', 'Copenhagen', 'Helsinki', 'Lisbon', 
-  'Athens', 'Budapest', 'Bucharest', 'Dublin', 'Munich', 
-  'Frankfurt', 'Milan', 'Barcelona', 'Zurich', 'Geneva',
-  'New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix', 
-  'Philadelphia', 'San Antonio', 'San Diego', 'Dallas', 'San Jose', 
-  'Austin', 'Jacksonville', 'San Francisco', 'Miami', 'Washington', 
-  'Toronto', 'Vancouver', 'Montreal', 'Mexico City', 'Sao Paulo', 
-  'Rio de Janeiro', 'Buenos Aires', 'Lima', 'Bogota', 'Santiago',
-  'Tokyo', 'Seoul', 'Beijing', 'Shanghai', 'Hong Kong', 
-  'Singapore', 'Bangkok', 'Mumbai', 'New Delhi', 'Dubai', 
-  'Istanbul', 'Cairo', 'Cape Town', 'Sydney', 'Melbourne'
-];
+const POPULAR_CITIES = ['Kyiv', 'London', 'New York', 'Paris', 'Berlin', 'Tokyo', /* ...інші ваші міста */];
 
 export const SearchBar = ({ onSearch }) => {
   const [city, setCity] = useState('');
+  const [isOpen, setIsOpen] = useState(false);
+  const wrapperRef = useRef(null);
 
-  const handleSubmit = e => {
-    e.preventDefault();
-    if (!city.trim()) return;
-
-    onSearch(city);
-    setCity('');
+  const addToHistory = (cityName) => {
+    const history = JSON.parse(localStorage.getItem('searchHistory') || '[]');
+    
+    const updatedHistory = [cityName, ...history.filter(item => item !== cityName)].slice(0, 50);
+    localStorage.setItem('searchHistory', JSON.stringify(updatedHistory));
+    
+    
+    window.dispatchEvent(new Event('historyUpdated'));
   };
 
-  
-  const filteredCities = POPULAR_CITIES.filter(item =>
-    item.toLowerCase().startsWith(city.toLowerCase())
-  );
+  const handleSelect = (cityName) => {
+    onSearch(cityName);
+    addToHistory(cityName);
+    setCity('');
+    setIsOpen(false);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!city.trim()) return;
+    onSearch(city);
+    addToHistory(city);
+    setCity('');
+    setIsOpen(false);
+  };
+
+  const filteredCities = city.trim() !== '' 
+    ? POPULAR_CITIES.filter(item => item.toLowerCase().startsWith(city.toLowerCase()))
+    : [];
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target)) setIsOpen(false);
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   return (
-    <SearchWrapper as="form" onSubmit={handleSubmit}>
+    <SearchWrapper as="form" onSubmit={handleSubmit} ref={wrapperRef}>
       <SearchInput
         type="text"
         placeholder="Search location..."
         value={city}
-        onChange={e => setCity(e.target.value)}
-        list="cities-list" 
-        autoComplete="off" 
+        onChange={(e) => { setCity(e.target.value); setIsOpen(true); }}
+        onFocus={() => setIsOpen(true)}
+        autoComplete="off"
       />
-
-      
-      <datalist id="cities-list">
-        {city.trim() !== '' && filteredCities.map((cityName, index) => (
-          <option key={index} value={cityName} />
-        ))}
-      </datalist>
-
-      <SearchButton type="submit">
-        <IoSearch />
-      </SearchButton>
+      {isOpen && filteredCities.length > 0 && (
+        <DropdownList>
+          {filteredCities.map((cityName, index) => (
+            <DropdownItem key={index} onClick={() => handleSelect(cityName)}>
+              {cityName}
+            </DropdownItem>
+          ))}
+        </DropdownList>
+      )}
+      <SearchButton type="submit"><IoSearch /></SearchButton>
     </SearchWrapper>
   );
 };

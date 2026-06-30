@@ -7,14 +7,15 @@ import { Page, Main } from './App.styled.js';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+import { HistoryList } from './components/HistoryList/HistoryList.jsx';
 import { Header } from './components/Header/Header.jsx';
 import { Hero } from './components/Hero/Hero.jsx';
 import { WeatherList } from './components/WeatherList/WeatherList.jsx';
 import { News } from './components/News/News.jsx';
-import { Gallery } from './components/Gallery/Gallery.jsx'; // Исправлено: добавлен ./
+import { Gallery } from './components/Gallery/Gallery.jsx';
 import { Footer } from './components/Footer/Footer.jsx';
 
-import { fetchWeather } from './services/weatherApi.js'; // Исправлено: убран пробел
+import { fetchWeather } from './services/weatherApi.js';
 import { fetchNaturePhotos } from './services/pixabayApi.js';
 
 function App() {
@@ -22,33 +23,30 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [photos, setPhotos] = useState([]);
 
+  const [history, setHistory] = useState(() => {
+    return JSON.parse(localStorage.getItem('searchHistory') || '[]');
+  });
+
   useEffect(() => {
     const loadCities = async () => {
       try {
         setLoading(true);
         const saved = localStorage.getItem('weatherCards');
-
         if (saved) {
           const parsed = JSON.parse(saved);
           const updated = await Promise.all(
             parsed.map(card => fetchWeather(card.name))
           );
-          const cards = updated.map((item, index) => ({
+          setWeatherCards(updated.map((item, index) => ({
             ...item,
             favorite: parsed[index].favorite || false,
-          }));
-          setWeatherCards(cards);
+          })));
         } else {
           const defaultCities = ['Kyiv', 'London', 'New York'];
           const cards = await Promise.all(
             defaultCities.map(city => fetchWeather(city))
           );
-          setWeatherCards(
-            cards.map(card => ({
-              ...card,
-              favorite: false,
-            }))
-          );
+          setWeatherCards(cards.map(card => ({ ...card, favorite: false })));
         }
       } catch (error) {
         console.log(error);
@@ -79,11 +77,19 @@ function App() {
     try {
       setLoading(true);
       const weather = await fetchWeather(city);
+      
       setWeatherCards(prev => {
         const exists = prev.some(card => card.id === weather.id);
         if (exists) return prev;
         return [...prev, { ...weather, favorite: false }];
       });
+    
+      setHistory(prev => {
+        const updated = [city, ...prev.filter(item => item !== city)].slice(0, 50);
+        localStorage.setItem('searchHistory', JSON.stringify(updated));
+        return updated;
+      });
+
     } catch (error) {
       console.log(error);
     } finally {
@@ -138,6 +144,9 @@ function App() {
             {photos.length > 0 && <Gallery images={photos} />}
           </Container>
         </Main>
+   
+        <HistoryList history={history} />
+        
         <Footer />
       </Page>
     </>

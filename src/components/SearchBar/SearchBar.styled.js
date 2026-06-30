@@ -81,3 +81,57 @@ export const SearchButton = styled.button`
     }
   }
 `;
+
+export const DropdownList = styled.ul`
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 625px;
+  background-color: #2c2c2c;
+
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+
+  padding: 10px 0;
+  margin: 0;
+  list-style: none;
+  z-index: 1000;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+  max-height: 300px;
+  overflow-y: auto;
+
+  @media (max-width: 1199px) {
+    width: 402px;
+  }
+
+  @media (max-width: 767px) {
+    width: 173px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+  }
+`;
+
+export const DropdownItem = styled.li`
+  padding: 10px 29px;
+  color: #fff;
+  font-family: "Montserrat", sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #444;
+  }
+
+  @media (max-width: 1199px) {
+    padding: 8px 19px;
+    font-size: 10px;
+  }
+
+  @media (max-width: 767px) {
+    padding: 4px 10px;
+    font-size: 6px;
+  }
+`;
